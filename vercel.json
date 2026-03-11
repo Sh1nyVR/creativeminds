@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm --workspace packages/scratch-gui run build:dev",
+  "buildCommand": "npm run build:dev --workspace=@scratch/scratch-gui",
   "outputDirectory": "packages/scratch-gui/build",
   "functions": {
     "api/ov.js": {
@@ -15,4 +15,3 @@
     }
   ]
 }
-
