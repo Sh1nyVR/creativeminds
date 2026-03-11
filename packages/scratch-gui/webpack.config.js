@@ -27,7 +27,7 @@ const cssModuleExceptions = [
     /[\\/]driver\.js[\\/].*\.css$/ // driver.js CSS
 ];
 const vercelBuildOutputPath = process.env.VERCEL
-    ? path.resolve(__dirname, '../../build')
+    ? path.resolve(process.cwd(), 'build')
     : path.resolve(__dirname, 'build');
 
 const baseConfig = new ScratchWebpackConfigBuilder(
