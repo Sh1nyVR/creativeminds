@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --include=dev --workspaces --include-workspace-root && npm install --include=dev --workspace=@scratch/scratch-gui",
-  "buildCommand": "npm run build:dev --workspace=@scratch/scratch-gui && node -e \"const fs=require('fs');fs.rmSync('build',{recursive:true,force:true});fs.cpSync('packages/scratch-gui/build','build',{recursive:true});\"",
+  "buildCommand": "npm run build:dev --workspace=@scratch/scratch-gui && rm -rf build && mkdir -p build && cp -a packages/scratch-gui/build/. build/",
   "outputDirectory": "build",
   "functions": {
     "api/ov.js": {
