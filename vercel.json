@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --include=dev --workspaces --include-workspace-root && npm install --include=dev --workspace=@scratch/scratch-gui",
-  "buildCommand": "npm run build:dev --workspace=@scratch/scratch-gui",
-  "outputDirectory": "packages/scratch-gui/build",
+  "buildCommand": "npm run build:dev --workspace=@scratch/scratch-gui && node scripts/vercel-copy-build.js",
+  "outputDirectory": "build",
   "functions": {
     "api/ov.js": {
       "runtime": "nodejs20.x",
