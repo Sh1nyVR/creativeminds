@@ -24,7 +24,13 @@ const builtinExtensions = {
     makeymakey: () => require('../extensions/scratch3_makeymakey'),
     boost: () => require('../extensions/scratch3_boost'),
     gdxfor: () => require('../extensions/scratch3_gdx_for'),
-    faceSensing: () => require('../extensions/scratch3_face_sensing')
+    faceSensing: () => require('../extensions/scratch3_face_sensing'),
+    codertools: () => require('../extensions/scratch3_coder_tools'),
+    threed: () => require('../extensions/scratch3_threed'),
+    uielements: () => require('../extensions/scratch3_ui_elements'),
+    motionplus: () => require('../extensions/scratch3_motion_plus'),
+    physics: () => require('../extensions/scratch3_physics'),
+    unblocked: () => require('../extensions/scratch3_unblocked')
 };
 
 /**

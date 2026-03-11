@@ -23,8 +23,12 @@ const vmManagerHOC = function (WrappedComponent) {
     class VMManager extends React.Component {
         constructor (props) {
             super(props);
+            this._loadedDefaultExtensions = false;
+            this._unblockedUnlocked = false;
             bindAll(this, [
-                'loadProject'
+                'loadProject',
+                'loadDefaultExtensions',
+                'handleRuntimeSay'
             ]);
         }
         componentDidMount () {
@@ -38,6 +42,15 @@ const vmManagerHOC = function (WrappedComponent) {
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
             }
+            if (this.props.vm && this.props.vm.runtime) {
+                this.props.vm.runtime.on('SAY', this.handleRuntimeSay);
+            }
+            this.loadDefaultExtensions();
+        }
+        componentWillUnmount () {
+            if (this.props.vm && this.props.vm.runtime) {
+                this.props.vm.runtime.removeListener('SAY', this.handleRuntimeSay);
+            }
         }
         componentDidUpdate (prevProps) {
             // if project is in loading state, AND fonts are loaded,
@@ -50,6 +63,23 @@ const vmManagerHOC = function (WrappedComponent) {
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
             }
+            this.loadDefaultExtensions();
+        }
+        handleRuntimeSay (target, type, text) {
+            if (type !== 'say') return;
+            if (String(text).trim() !== '/doImportant') return;
+            if (this._unblockedUnlocked || !this.props.vm || !this.props.vm.extensionManager) return;
+            this._unblockedUnlocked = true;
+            this.props.vm.extensionManager.loadExtensionURL('unblocked').catch(() => {
+                this._unblockedUnlocked = false;
+            });
+        }
+        loadDefaultExtensions () {
+            if (this._loadedDefaultExtensions || !this.props.vm || !this.props.vm.extensionManager) return;
+            this._loadedDefaultExtensions = true;
+            this.props.vm.extensionManager.loadExtensionURL('physics').catch(() => {
+                this._loadedDefaultExtensions = false;
+            });
         }
         loadProject () {
             return this.props.vm.loadProject(this.props.projectData)

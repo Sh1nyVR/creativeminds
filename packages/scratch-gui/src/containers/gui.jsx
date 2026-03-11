@@ -53,15 +53,35 @@ import {
 } from '../lib/assets-prop-types.js';
 
 class GUI extends React.Component {
+    constructor (props) {
+        super(props);
+        this.onInterstellarStart = this.onInterstellarStart.bind(this);
+    }
     componentDidMount () {
         this.props.onStorageInit(this.props.storage.scratchStorage);
         this.props.onVmInit(this.props.vm);
         this.props.storage.setProjectMetadata?.(this.props.projectId);
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+            const betaNoticeKey = 'creativeminds-beta-notice-shown';
+            if (!window.sessionStorage.getItem(betaNoticeKey)) {
+                window.sessionStorage.setItem(betaNoticeKey, '1');
+                // eslint-disable-next-line no-alert
+                window.alert('CreativeMinds is in beta.');
+            }
+        }
         if (this.props.platform) {
             this.props.setPlatform(this.props.platform);
         }
         if (this.props.dynamicAssets) {
             this.props.onUpdateDynamicAssets(this.props.dynamicAssets);
+        }
+        if (this.props.vm && this.props.vm.runtime) {
+            this.props.vm.runtime.on('INTERSTELLAR_START_PROCESS', this.onInterstellarStart);
+        }
+    }
+    componentWillUnmount () {
+        if (this.props.vm && this.props.vm.runtime) {
+            this.props.vm.runtime.removeListener('INTERSTELLAR_START_PROCESS', this.onInterstellarStart);
         }
     }
     componentDidUpdate (prevProps) {
@@ -83,6 +103,9 @@ class GUI extends React.Component {
         if (this.props.shouldStopProject && !prevProps.shouldStopProject) {
             this.props.vm.stopAll();
         }
+    }
+    onInterstellarStart () {
+        window.location.assign('/static/interstellar/index.html');
     }
     render () {
         if (this.props.isError) {

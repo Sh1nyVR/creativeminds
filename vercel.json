@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm --workspace packages/scratch-gui run build:dev",
+  "outputDirectory": "packages/scratch-gui/build",
+  "functions": {
+    "api/ov.js": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/ov/:path*",
+      "destination": "/api/ov?path=:path*"
+    }
+  ]
+}
+

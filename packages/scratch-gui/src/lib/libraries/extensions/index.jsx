@@ -93,6 +93,86 @@ export default [
     {
         name: (
             <FormattedMessage
+                defaultMessage="Coder Tools"
+                description="Name for the 'Coder Tools' extension"
+                id="gui.extension.codertools.name"
+            />
+        ),
+        extensionId: 'codertools',
+        iconURL: penIconURL,
+        insetIconURL: penInsetIconURL,
+        description: (
+            <FormattedMessage
+                defaultMessage="Extra blocks for math, JSON, and logic."
+                description="Description for the 'Coder Tools' extension"
+                id="gui.extension.codertools.description"
+            />
+        ),
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="3D"
+                description="Name for the '3D' extension"
+                id="gui.extension.threed.name"
+            />
+        ),
+        extensionId: 'threed',
+        iconURL: videoSensingIconURL,
+        insetIconURL: videoSensingInsetIconURL,
+        description: (
+            <FormattedMessage
+                defaultMessage="Create and render simple 3D scenes."
+                description="Description for the '3D' extension"
+                id="gui.extension.threed.description"
+            />
+        ),
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="UI Elements"
+                description="Name for the 'UI Elements' extension"
+                id="gui.extension.uielements.name"
+            />
+        ),
+        extensionId: 'uielements',
+        iconURL: penIconURL,
+        insetIconURL: penInsetIconURL,
+        description: (
+            <FormattedMessage
+                defaultMessage="Create panels and buttons quickly."
+                description="Description for the 'UI Elements' extension"
+                id="gui.extension.uielements.description"
+            />
+        ),
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="Motion+"
+                description="Name for the 'Motion+' extension"
+                id="gui.extension.motionplus.name"
+            />
+        ),
+        extensionId: 'motionplus',
+        iconURL: videoSensingIconURL,
+        insetIconURL: videoSensingInsetIconURL,
+        description: (
+            <FormattedMessage
+                defaultMessage="Extra movement and velocity blocks."
+                description="Description for the 'Motion+' extension"
+                id="gui.extension.motionplus.description"
+            />
+        ),
+        featured: true
+    },
+    {
+        name: (
+            <FormattedMessage
                 defaultMessage="Video Sensing"
                 description="Name for the 'Video Sensing' extension"
                 id="gui.extension.videosensing.name"

@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const {createBareServer} = require('@tomphttp/bare-server-node');
 
 // Plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -150,6 +151,35 @@ const distStandaloneConfig = baseConfig.clone()
 const buildConfig = baseConfig.clone()
     .enableDevServer(process.env.PORT || 8601)
     .merge({
+        devServer: {
+            setupMiddlewares: (middlewares, devServer) => {
+                if (!devServer) return middlewares;
+                const bareServer = createBareServer('/ov/');
+
+                middlewares.unshift({
+                    name: 'interstellar-bare-server',
+                    middleware: (req, res, next) => {
+                        const bareReq = Object.assign({}, req, {url: req.originalUrl || req.url});
+                        if (bareServer.shouldRoute(bareReq)) {
+                            bareServer.routeRequest(req, res);
+                            return;
+                        }
+                        next();
+                    }
+                });
+
+                if (devServer.server && !devServer.__interstellarBareUpgradeHook) {
+                    devServer.server.on('upgrade', (req, socket, head) => {
+                        if (bareServer.shouldRoute(req)) {
+                            bareServer.routeUpgrade(req, socket, head);
+                        }
+                    });
+                    devServer.__interstellarBareUpgradeHook = true;
+                }
+
+                return middlewares;
+            }
+        },
         entry: {
             gui: './src/playground/index.jsx',
             guistandalone: './src/playground/standalone.jsx',
@@ -206,6 +236,13 @@ const buildConfig = baseConfig.clone()
             {
                 from: 'static',
                 to: 'static'
+            },
+            {
+                // Let the repo-level Interstellar folder override bundled static files.
+                // This makes /static/interstellar load directly from ../../Interstellar.
+                from: '../../Interstellar',
+                to: 'static/interstellar',
+                noErrorOnMissing: true
             },
             {
                 from: 'extensions/**',
