@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install --include=dev --workspaces --include-workspace-root",
   "buildCommand": "npm run build:dev --workspace=@scratch/scratch-gui",
   "outputDirectory": "packages/scratch-gui/build",
   "functions": {
