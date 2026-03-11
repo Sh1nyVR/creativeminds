@@ -26,6 +26,9 @@ const cssModuleExceptions = [
     /\.raw\.css$/, // Allow for overriding CSS classes from libraries
     /[\\/]driver\.js[\\/].*\.css$/ // driver.js CSS
 ];
+const vercelBuildOutputPath = process.env.VERCEL
+    ? path.resolve(__dirname, '../../build')
+    : path.resolve(__dirname, 'build');
 
 const baseConfig = new ScratchWebpackConfigBuilder(
     {
@@ -188,7 +191,7 @@ const buildConfig = baseConfig.clone()
             player: './src/playground/player.jsx'
         },
         output: {
-            path: path.resolve(__dirname, 'build'),
+            path: vercelBuildOutputPath,
 
             // This output is loaded using a file:// scheme from the local file system.
             // Having `publicPath: '/'` (the default) means the `gui.js` file in `build/index.html`
