@@ -1,1 +1,1 @@
-require('../../../scripts/vercel-runner.js');
+import '../../../scripts/vercel-runner.js';
