@@ -14,7 +14,7 @@ window.addEventListener("load", () => {
     sessionStorage.setItem("GoUrl", __uv$config.encodeUrl(url))
     const iframeContainer = document.getElementById("iframe-container")
     const activeIframe = Array.from(iframeContainer.querySelectorAll("iframe")).find((iframe) => iframe.classList.contains("active"))
-    activeIframe.src = "/interstellar/a/" + __uv$config.encodeUrl(url)
+    loadProxyIntoIframe(activeIframe, "/interstellar/a/" + __uv$config.encodeUrl(url))
     activeIframe.dataset.tabUrl = url
     input.value = url
     console.log(activeIframe.dataset.tabUrl)
@@ -88,16 +88,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     if (tabCounter === 0 || tabCounter === 1) {
       if (GoURL !== null) {
-        newIframe.src = window.location.origin + normalizeInterstellarUrlPath(GoURL)
+        loadProxyIntoIframe(newIframe, window.location.origin + normalizeInterstellarUrlPath(GoURL))
       } else {
         newIframe.src = "/"
       }
     } else if (tabCounter > 1) {
       if (URL !== null) {
-        newIframe.src = window.location.origin + URL
+        loadProxyIntoIframe(newIframe, window.location.origin + URL)
         sessionStorage.removeItem("URL")
       } else if (GoURL !== null) {
-        newIframe.src = window.location.origin + normalizeInterstellarUrlPath(GoURL)
+        loadProxyIntoIframe(newIframe, window.location.origin + normalizeInterstellarUrlPath(GoURL))
       } else {
         newIframe.src = "/"
       }
@@ -359,5 +359,50 @@ function normalizeInterstellarUrlPath(path) {
   if (path.startsWith("/e/")) return "/interstellar/a/q/" + path.slice(3)
   if (path.startsWith("/a/")) return "/interstellar" + path
   return "/interstellar/a/" + path
+}
+
+async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
+  if (!("serviceWorker" in navigator)) return false
+
+  try {
+    await navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", { scope: "/interstellar/" })
+  } catch (e) {
+    return false
+  }
+
+  try {
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+    ])
+  } catch (e) {}
+
+  if (navigator.serviceWorker.controller) return true
+
+  await new Promise((resolve) => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      resolve()
+    }
+    const timer = setTimeout(() => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }, timeoutMs)
+    const onControllerChange = () => {
+      clearTimeout(timer)
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange)
+  })
+
+  return !!navigator.serviceWorker.controller
+}
+
+async function loadProxyIntoIframe(iframe, target) {
+  const hasController = await waitForInterstellarServiceWorker()
+  iframe.src = hasController ? target : "/interstellar/tabs.html"
 }
 

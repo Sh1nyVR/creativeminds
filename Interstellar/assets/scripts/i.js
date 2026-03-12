@@ -31,15 +31,14 @@ function processUrl(value, path) {
   sessionStorage.setItem("GoUrl", __uv$config.encodeUrl(url))
   const dy = localStorage.getItem("dy")
 
-  if (dy === "true") {
-    window.location.href = "/interstellar/a/q/" + __uv$config.encodeUrl(url)
-  } else {
-    if (path) {
-      location.href = path
-    } else {
-      window.location.href = "/interstellar/a/" + __uv$config.encodeUrl(url)
-    }
+  const target = dy === "true" ? "/interstellar/a/q/" + __uv$config.encodeUrl(url) : "/interstellar/a/" + __uv$config.encodeUrl(url)
+
+  if (path) {
+    location.href = path
+    return
   }
+
+  navigateToProxyTarget(target)
 }
 
 function go(value) {
@@ -59,5 +58,58 @@ function isUrl(val = "") {
     return true
   }
   return false
+}
+
+async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
+  if (!("serviceWorker" in navigator)) return false
+
+  try {
+    await navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", {
+      scope: "/interstellar/",
+    })
+  } catch (e) {
+    return false
+  }
+
+  try {
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+    ])
+  } catch (e) {}
+
+  if (navigator.serviceWorker.controller) return true
+
+  await new Promise((resolve) => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      resolve()
+    }
+    const timer = setTimeout(() => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }, timeoutMs)
+    const onControllerChange = () => {
+      clearTimeout(timer)
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange)
+  })
+
+  return !!navigator.serviceWorker.controller
+}
+
+async function navigateToProxyTarget(target) {
+  const hasController = await waitForInterstellarServiceWorker()
+  if (hasController) {
+    window.location.href = target
+    return
+  }
+
+  // Fallback: avoid hard 404 if SW still isn't controlling this page yet.
+  window.location.href = "/interstellar/tabs.html"
 }
 
