@@ -35,8 +35,8 @@
       "destination": "/static/interstellar/favicon.ico"
     },
     {
-      "source": "/:page(apps|games|privacy|settings|tabs|tools|tos).html",
-      "destination": "/static/interstellar/:page.html"
+      "source": "/:path*.html",
+      "destination": "/static/interstellar/:path*.html"
     },
     {
       "source": "/interstellar",
