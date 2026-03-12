@@ -11,6 +11,38 @@
   },
   "rewrites": [
     {
+      "source": "/interstellar/:path*",
+      "destination": "/static/interstellar/:path*"
+    },
+    {
+      "source": "/assets/:path*",
+      "destination": "/static/interstellar/assets/:path*"
+    },
+    {
+      "source": "/dy/:path*",
+      "destination": "/static/interstellar/dy/:path*"
+    },
+    {
+      "source": "/sw.js",
+      "destination": "/static/interstellar/sw.js"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/static/interstellar/robots.txt"
+    },
+    {
+      "source": "/favicon.ico",
+      "destination": "/static/interstellar/favicon.ico"
+    },
+    {
+      "source": "/:page(apps|games|privacy|settings|tabs|tools|tos).html",
+      "destination": "/static/interstellar/:page.html"
+    },
+    {
+      "source": "/interstellar",
+      "destination": "/static/interstellar/index.html"
+    },
+    {
       "source": "/ov/:path*",
       "destination": "/api/ov?path=:path*"
     }
