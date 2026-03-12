@@ -38,10 +38,17 @@ if ((build.status || 0) !== 0) {
     process.exit(build.status || 1);
 }
 
-const source = path.join(repoRoot, 'build');
+const sourceCandidates = [
+    path.join(repoRoot, 'packages', 'scratch-gui', 'build'),
+    path.join(repoRoot, 'build')
+];
+const source = sourceCandidates.find(candidate => fs.existsSync(candidate));
 const target = path.join(startCwd, 'build');
-if (!fs.existsSync(source)) {
-    console.error(`Missing expected build output: ${source}`);
+if (!source) {
+    console.error('Missing expected build output. Checked:');
+    for (const candidate of sourceCandidates) {
+        console.error(`- ${candidate}`);
+    }
     process.exit(1);
 }
 
