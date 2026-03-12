@@ -23,6 +23,10 @@
       "destination": "/static/interstellar/dy/:path*"
     },
     {
+      "source": "/e/:path*",
+      "destination": "/static/interstellar/a/q/:path*"
+    },
+    {
       "source": "/sw.js",
       "destination": "/static/interstellar/sw.js"
     },

@@ -88,11 +88,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     if (tabCounter === 0 || tabCounter === 1) {
       if (GoURL !== null) {
-        if (GoURL.includes("/e/")) {
-          newIframe.src = window.location.origin + GoURL
-        } else {
-          newIframe.src = window.location.origin + "/static/interstellar/a/" + GoURL
-        }
+        newIframe.src = window.location.origin + normalizeInterstellarUrlPath(GoURL)
       } else {
         newIframe.src = "/"
       }
@@ -101,11 +97,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         newIframe.src = window.location.origin + URL
         sessionStorage.removeItem("URL")
       } else if (GoURL !== null) {
-        if (GoURL.includes("/e/")) {
-          newIframe.src = window.location.origin + GoURL
-        } else {
-          newIframe.src = window.location.origin + "/static/interstellar/a/" + GoURL
-        }
+        newIframe.src = window.location.origin + normalizeInterstellarUrlPath(GoURL)
       } else {
         newIframe.src = "/"
       }
@@ -359,5 +351,13 @@ function decodeXor(input) {
       .map((char, ind) => (ind % 2 ? String.fromCharCode(char.charCodeAt(NaN) ^ 2) : char))
       .join("") + (search.length ? "?" + search.join("?") : "")
   )
+}
+
+function normalizeInterstellarUrlPath(path) {
+  if (!path) return "/"
+  if (path.startsWith("/static/interstellar/")) return path
+  if (path.startsWith("/e/")) return "/static/interstellar/a/q/" + path.slice(3)
+  if (path.startsWith("/a/")) return "/static/interstellar" + path
+  return "/static/interstellar/a/" + path
 }
 
