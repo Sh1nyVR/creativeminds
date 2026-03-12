@@ -1,8 +1,8 @@
 let appInd
-let g = window.location.pathname === "/static/interstellar/games.html"
-let a = window.location.pathname === "/static/interstellar/apps.html"
-let c = window.location.pathname === "/static/interstellar/tools.html"
-let t = window.top.location.pathname === "/static/interstellar/tabs.html"
+let g = window.location.pathname === "/interstellar/games.html"
+let a = window.location.pathname === "/interstellar/apps.html"
+let c = window.location.pathname === "/interstellar/tools.html"
+let t = window.top.location.pathname === "/interstellar/tabs.html"
 
 function saveToLocal(path) {
   sessionStorage.setItem("GoUrl", path)
@@ -22,12 +22,12 @@ function handleClick(app) {
   }
 
   if (typeof Selected === "string" && Selected.startsWith("/assets/")) {
-    Selected = "/static/interstellar" + Selected
+    Selected = "/interstellar" + Selected
   }
 
   if (app.local) {
     saveToLocal(Selected)
-    window.location.href = "/static/interstellar/tabs.html"
+    window.location.href = "/interstellar/tabs.html"
     if (t) {
       window.location.href = Selected
     }
@@ -146,7 +146,7 @@ function Custom(app) {
     const customApp = {
       name: "[Custom] " + title,
       link: link,
-      image: "/static/interstellar/assets/media/icons/custom.webp",
+      image: "/interstellar/assets/media/icons/custom.webp",
       custom: false,
     }
 
@@ -217,13 +217,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
-let path = "/static/interstellar/assets/json/a.min.json"
+let path = "/interstellar/assets/json/a.min.json"
 if (g) {
-  path = "/static/interstellar/assets/json/g.min.json"
+  path = "/interstellar/assets/json/g.min.json"
 } else if (c) {
-  path = "/static/interstellar/assets/json/t.min.json"
+  path = "/interstellar/assets/json/t.min.json"
 } else if (a) {
-  path = "/static/interstellar/assets/json/a.min.json"
+  path = "/interstellar/assets/json/a.min.json"
 }
 fetch(path)
   .then((response) => {
@@ -253,10 +253,10 @@ fetch(path)
 
     appsList.forEach((app) => {
       if (typeof app.image === "string" && app.image.startsWith("/assets/")) {
-        app.image = "/static/interstellar" + app.image
+        app.image = "/interstellar" + app.image
       }
       if (typeof app.link === "string" && app.link.startsWith("/assets/")) {
-        app.link = "/static/interstellar" + app.link
+        app.link = "/interstellar" + app.link
       }
       if (app.categories && app.categories.includes("local")) {
         app.local = true

@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
   "installCommand": "npm install --include=dev --workspaces --include-workspace-root && npm install --include=dev --workspace=@scratch/scratch-gui",
   "buildCommand": "node scripts/vercel-runner.js",
   "outputDirectory": "build",
@@ -13,6 +14,42 @@
     {
       "source": "/interstellar",
       "destination": "/static/interstellar/index.html"
+    },
+    {
+      "source": "/interstellar/index",
+      "destination": "/static/interstellar/index.html"
+    },
+    {
+      "source": "/interstellar/games",
+      "destination": "/static/interstellar/games.html"
+    },
+    {
+      "source": "/interstellar/apps",
+      "destination": "/static/interstellar/apps.html"
+    },
+    {
+      "source": "/interstellar/tools",
+      "destination": "/static/interstellar/tools.html"
+    },
+    {
+      "source": "/interstellar/tabs",
+      "destination": "/static/interstellar/tabs.html"
+    },
+    {
+      "source": "/interstellar/settings",
+      "destination": "/static/interstellar/settings.html"
+    },
+    {
+      "source": "/interstellar/privacy",
+      "destination": "/static/interstellar/privacy.html"
+    },
+    {
+      "source": "/interstellar/tos",
+      "destination": "/static/interstellar/tos.html"
+    },
+    {
+      "source": "/interstellar/404",
+      "destination": "/static/interstellar/404.html"
     },
     {
       "source": "/interstellar/:path*",

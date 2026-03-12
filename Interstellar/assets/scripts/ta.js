@@ -1,5 +1,5 @@
 window.addEventListener("load", () => {
-  navigator.serviceWorker.register("/static/interstellar/sw.js?v=5-5-2024", { scope: "/static/interstellar/" })
+  navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", { scope: "/interstellar/" })
   const form = document.getElementById("fs")
   const input = document.getElementById("is")
   if (form && input) {
@@ -14,7 +14,7 @@ window.addEventListener("load", () => {
     sessionStorage.setItem("GoUrl", __uv$config.encodeUrl(url))
     const iframeContainer = document.getElementById("iframe-container")
     const activeIframe = Array.from(iframeContainer.querySelectorAll("iframe")).find((iframe) => iframe.classList.contains("active"))
-    activeIframe.src = "/static/interstellar/a/" + __uv$config.encodeUrl(url)
+    activeIframe.src = "/interstellar/a/" + __uv$config.encodeUrl(url)
     activeIframe.dataset.tabUrl = url
     input.value = url
     console.log(activeIframe.dataset.tabUrl)
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         tabTitle.textContent = title
       }
       newIframe.contentWindow.open = function (url) {
-        sessionStorage.setItem("URL", "/static/interstellar/a/" + __uv$config.encodeUrl(url))
+        sessionStorage.setItem("URL", "/interstellar/a/" + __uv$config.encodeUrl(url))
         createNewTab()
         return null
       }
@@ -323,13 +323,13 @@ function Load() {
   const activeIframe = document.querySelector("#iframe-container iframe.active")
   if (activeIframe && activeIframe.contentWindow.document.readyState === "complete") {
     const website = activeIframe.contentWindow.document.location.href
-    if (website.includes("/static/interstellar/a/")) {
-      const websitePath = website.replace(window.location.origin, "").replace("/static/interstellar/a/", "")
+    if (website.includes("/interstellar/a/")) {
+      const websitePath = website.replace(window.location.origin, "").replace("/interstellar/a/", "")
       localStorage.setItem("decoded", websitePath)
       const decodedValue = decodeXor(websitePath)
       document.getElementById("is").value = decodedValue
-    } else if (website.includes("/static/interstellar/a/q/")) {
-      const websitePath = website.replace(window.location.origin, "").replace("/static/interstellar/a/q/", "")
+    } else if (website.includes("/interstellar/a/q/")) {
+      const websitePath = website.replace(window.location.origin, "").replace("/interstellar/a/q/", "")
       const decodedValue = decodeXor(websitePath)
       localStorage.setItem("decoded", websitePath)
       document.getElementById("is").value = decodedValue
@@ -355,9 +355,9 @@ function decodeXor(input) {
 
 function normalizeInterstellarUrlPath(path) {
   if (!path) return "/"
-  if (path.startsWith("/static/interstellar/")) return path
-  if (path.startsWith("/e/")) return "/static/interstellar/a/q/" + path.slice(3)
-  if (path.startsWith("/a/")) return "/static/interstellar" + path
-  return "/static/interstellar/a/" + path
+  if (path.startsWith("/interstellar/")) return path
+  if (path.startsWith("/e/")) return "/interstellar/a/q/" + path.slice(3)
+  if (path.startsWith("/a/")) return "/interstellar" + path
+  return "/interstellar/a/" + path
 }
 

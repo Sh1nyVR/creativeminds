@@ -1,6 +1,6 @@
 window.addEventListener("load", () => {
-  navigator.serviceWorker.register("/static/interstellar/sw.js?v=5-5-2024", {
-    scope: "/static/interstellar/",
+  navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", {
+    scope: "/interstellar/",
   })
 })
 
@@ -10,10 +10,10 @@ const input = document.getElementById("is")
 if (form && input) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault()
-    if (window.top.location.pathname === "/static/interstellar/tabs.html") {
+    if (window.top.location.pathname === "/interstellar/tabs.html") {
       processUrl(input.value, "")
     } else {
-      processUrl(input.value, "/static/interstellar/tabs.html")
+      processUrl(input.value, "/interstellar/tabs.html")
     }
   })
 }
@@ -32,18 +32,18 @@ function processUrl(value, path) {
   const dy = localStorage.getItem("dy")
 
   if (dy === "true") {
-    window.location.href = "/static/interstellar/a/q/" + __uv$config.encodeUrl(url)
+    window.location.href = "/interstellar/a/q/" + __uv$config.encodeUrl(url)
   } else {
     if (path) {
       location.href = path
     } else {
-      window.location.href = "/static/interstellar/a/" + __uv$config.encodeUrl(url)
+      window.location.href = "/interstellar/a/" + __uv$config.encodeUrl(url)
     }
   }
 }
 
 function go(value) {
-  processUrl(value, "/static/interstellar/tabs.html")
+  processUrl(value, "/interstellar/tabs.html")
 }
 
 function blank(value) {
@@ -51,7 +51,7 @@ function blank(value) {
 }
 
 function dy(value) {
-  processUrl(value, "/static/interstellar/a/q/" + __uv$config.encodeUrl(value))
+  processUrl(value, "/interstellar/a/q/" + __uv$config.encodeUrl(value))
 }
 
 function isUrl(val = "") {

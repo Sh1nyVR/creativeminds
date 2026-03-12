@@ -1,8 +1,8 @@
-importScripts("/static/interstellar/dy/config.js?v=12")
-importScripts("/static/interstellar/dy/worker.js?v=12")
-importScripts("/static/interstellar/assets/-/bundle.js?v=5-5-2024")
-importScripts("/static/interstellar/assets/-/config.js?v=5-5-2024")
-importScripts(__uv$config.sw || "/static/interstellar/assets/-/sw.js?v=2")
+importScripts("/interstellar/dy/config.js?v=12")
+importScripts("/interstellar/dy/worker.js?v=12")
+importScripts("/interstellar/assets/-/bundle.js?v=5-5-2024")
+importScripts("/interstellar/assets/-/config.js?v=5-5-2024")
+importScripts(__uv$config.sw || "/interstellar/assets/-/sw.js?v=2")
 
 const uv = new UVServiceWorker()
 const dynamic = new Dynamic()
@@ -17,7 +17,7 @@ self.addEventListener("fetch", (event) => {
         return await dynamic.fetch(event)
       }
 
-      if (event.request.url.startsWith(location.origin + "/static/interstellar/a/")) {
+      if (event.request.url.startsWith(location.origin + "/interstellar/a/")) {
         return await uv.fetch(event)
       }
 
