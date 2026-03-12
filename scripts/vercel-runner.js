@@ -55,11 +55,4 @@ if (!source) {
 fs.rmSync(target, {recursive: true, force: true});
 fs.cpSync(source, target, {recursive: true});
 
-// Make Interstellar directly addressable at deploy root.
-// This avoids relying on Vercel rewrite behavior for every HTML route.
-const interstellarRoot = path.join(target, 'static', 'interstellar');
-if (fs.existsSync(interstellarRoot)) {
-    fs.cpSync(interstellarRoot, target, {recursive: true, force: true});
-}
-
 console.log(`Prepared deploy output: ${target}`);

@@ -11,44 +11,16 @@
   },
   "rewrites": [
     {
+      "source": "/interstellar",
+      "destination": "/static/interstellar/index.html"
+    },
+    {
       "source": "/interstellar/:path*",
       "destination": "/static/interstellar/:path*"
     },
     {
       "source": "/api/ov/:path*",
       "destination": "/api/ov?path=:path*"
-    },
-    {
-      "source": "/assets/:path*",
-      "destination": "/static/interstellar/assets/:path*"
-    },
-    {
-      "source": "/dy/:path*",
-      "destination": "/static/interstellar/dy/:path*"
-    },
-    {
-      "source": "/e/:path*",
-      "destination": "/static/interstellar/a/q/:path*"
-    },
-    {
-      "source": "/sw.js",
-      "destination": "/static/interstellar/sw.js"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/static/interstellar/robots.txt"
-    },
-    {
-      "source": "/favicon.ico",
-      "destination": "/static/interstellar/favicon.ico"
-    },
-    {
-      "source": "/:path*.html",
-      "destination": "/static/interstellar/:path*.html"
-    },
-    {
-      "source": "/interstellar",
-      "destination": "/static/interstellar/index.html"
     },
     {
       "source": "/ov/:path*",
