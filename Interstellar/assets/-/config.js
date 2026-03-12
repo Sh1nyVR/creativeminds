@@ -1,6 +1,6 @@
 self.__uv$config = {
     prefix: '/interstellar/a/',
-    bare: '/api/ov/',
+    bare: '/ov/',
     encodeUrl: Ultraviolet.codec.xor.encode,
     decodeUrl: Ultraviolet.codec.xor.decode,
     handler: '/interstellar/assets/-/handler.js?v=5-5-2024',

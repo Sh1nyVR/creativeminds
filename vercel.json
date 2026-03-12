@@ -60,6 +60,22 @@
       "destination": "/api/ov?path=:path*"
     },
     {
+      "source": "/api/ov/",
+      "destination": "/api/ov?path="
+    },
+    {
+      "source": "/api/ov",
+      "destination": "/api/ov?path="
+    },
+    {
+      "source": "/ov/",
+      "destination": "/api/ov?path="
+    },
+    {
+      "source": "/ov",
+      "destination": "/api/ov?path="
+    },
+    {
       "source": "/ov/:path*",
       "destination": "/api/ov?path=:path*"
     }

@@ -5,7 +5,7 @@ self.__dynamic$config = {
   logLevel: 0,
   bare: {
     version: 2,
-    path: "/api/ov/",
+    path: "/ov/",
   },
   tab: {
     title: null,
