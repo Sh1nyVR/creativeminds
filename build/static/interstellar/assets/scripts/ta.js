@@ -1,5 +1,8 @@
+const INTERSTELLAR_SCOPE = "/static/interstellar/"
+const INTERSTELLAR_SW_URL = `${INTERSTELLAR_SCOPE}sw.js?v=5-5-2024`
+
 window.addEventListener("load", () => {
-  navigator.serviceWorker.register("/static/interstellar/sw.js?v=5-5-2024", { scope: "/static/interstellar/" })
+  void waitForInterstellarServiceWorker()
   const form = document.getElementById("fs")
   const input = document.getElementById("is")
   if (form && input) {
@@ -14,7 +17,8 @@ window.addEventListener("load", () => {
     sessionStorage.setItem("GoUrl", __uv$config.encodeUrl(url))
     const iframeContainer = document.getElementById("iframe-container")
     const activeIframe = Array.from(iframeContainer.querySelectorAll("iframe")).find((iframe) => iframe.classList.contains("active"))
-    activeIframe.src = "/static/interstellar/a/" + __uv$config.encodeUrl(url)
+    if (!activeIframe) return
+    loadProxyIntoIframe(activeIframe, "/static/interstellar/a/" + __uv$config.encodeUrl(url))
     activeIframe.dataset.tabUrl = url
     input.value = url
     console.log(activeIframe.dataset.tabUrl)
@@ -88,24 +92,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     if (tabCounter === 0 || tabCounter === 1) {
       if (GoURL !== null) {
-        if (GoURL.includes("/e/")) {
-          newIframe.src = window.location.origin + GoURL
-        } else {
-          newIframe.src = window.location.origin + "/static/interstellar/a/" + GoURL
-        }
+        loadProxyIntoIframe(newIframe, window.location.origin + normalizeInterstellarUrlPath(GoURL))
       } else {
         newIframe.src = "/"
       }
     } else if (tabCounter > 1) {
       if (URL !== null) {
-        newIframe.src = window.location.origin + URL
+        loadProxyIntoIframe(newIframe, window.location.origin + URL)
         sessionStorage.removeItem("URL")
       } else if (GoURL !== null) {
-        if (GoURL.includes("/e/")) {
-          newIframe.src = window.location.origin + GoURL
-        } else {
-          newIframe.src = window.location.origin + "/static/interstellar/a/" + GoURL
-        }
+        loadProxyIntoIframe(newIframe, window.location.origin + normalizeInterstellarUrlPath(GoURL))
       } else {
         newIframe.src = "/"
       }
@@ -284,7 +280,6 @@ function goBack() {
   const activeIframe = document.querySelector("#iframe-container iframe.active")
   if (activeIframe) {
     activeIframe.contentWindow.history.back()
-    iframe.src = activeIframe.src
     Load()
   } else {
     console.error("No active iframe found")
@@ -295,7 +290,6 @@ function goForward() {
   const activeIframe = document.querySelector("#iframe-container iframe.active")
   if (activeIframe) {
     activeIframe.contentWindow.history.forward()
-    iframe.src = activeIframe.src
     Load()
   } else {
     console.error("No active iframe found")
@@ -359,5 +353,63 @@ function decodeXor(input) {
       .map((char, ind) => (ind % 2 ? String.fromCharCode(char.charCodeAt(NaN) ^ 2) : char))
       .join("") + (search.length ? "?" + search.join("?") : "")
   )
+}
+
+function normalizeInterstellarUrlPath(path) {
+  if (!path) return "/"
+  if (path.startsWith("/static/interstellar/")) return path
+  if (path.startsWith("/e/")) return "/static/interstellar/a/q/" + path.slice(3)
+  if (path.startsWith("/a/")) return "/static/interstellar" + path
+  return "/static/interstellar/a/" + path
+}
+
+async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
+  if (!("serviceWorker" in navigator)) return false
+
+  let registration
+  try {
+    registration = await navigator.serviceWorker.register(INTERSTELLAR_SW_URL, { scope: INTERSTELLAR_SCOPE })
+  } catch (e) {
+    return false
+  }
+
+  if (registration.waiting) {
+    registration.waiting.postMessage({ type: "SKIP_WAITING" })
+  }
+
+  try {
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+    ])
+  } catch (e) {}
+
+  if (navigator.serviceWorker.controller) return true
+
+  await new Promise((resolve) => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      resolve()
+    }
+    const timer = setTimeout(() => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }, timeoutMs)
+    const onControllerChange = () => {
+      clearTimeout(timer)
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange)
+  })
+
+  return !!navigator.serviceWorker.controller
+}
+
+async function loadProxyIntoIframe(iframe, target) {
+  await waitForInterstellarServiceWorker()
+  iframe.src = target
 }
 

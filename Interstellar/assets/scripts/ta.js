@@ -1,5 +1,8 @@
+const INTERSTELLAR_SCOPE = "/interstellar/"
+const INTERSTELLAR_SW_URL = `${INTERSTELLAR_SCOPE}sw.js?v=5-5-2024`
+
 window.addEventListener("load", () => {
-  navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", { scope: "/interstellar/" })
+  void waitForInterstellarServiceWorker()
   const form = document.getElementById("fs")
   const input = document.getElementById("is")
   if (form && input) {
@@ -14,6 +17,7 @@ window.addEventListener("load", () => {
     sessionStorage.setItem("GoUrl", __uv$config.encodeUrl(url))
     const iframeContainer = document.getElementById("iframe-container")
     const activeIframe = Array.from(iframeContainer.querySelectorAll("iframe")).find((iframe) => iframe.classList.contains("active"))
+    if (!activeIframe) return
     loadProxyIntoIframe(activeIframe, "/interstellar/a/" + __uv$config.encodeUrl(url))
     activeIframe.dataset.tabUrl = url
     input.value = url
@@ -276,7 +280,6 @@ function goBack() {
   const activeIframe = document.querySelector("#iframe-container iframe.active")
   if (activeIframe) {
     activeIframe.contentWindow.history.back()
-    iframe.src = activeIframe.src
     Load()
   } else {
     console.error("No active iframe found")
@@ -287,7 +290,6 @@ function goForward() {
   const activeIframe = document.querySelector("#iframe-container iframe.active")
   if (activeIframe) {
     activeIframe.contentWindow.history.forward()
-    iframe.src = activeIframe.src
     Load()
   } else {
     console.error("No active iframe found")
@@ -364,10 +366,15 @@ function normalizeInterstellarUrlPath(path) {
 async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
   if (!("serviceWorker" in navigator)) return false
 
+  let registration
   try {
-    await navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", { scope: "/interstellar/" })
+    registration = await navigator.serviceWorker.register(INTERSTELLAR_SW_URL, { scope: INTERSTELLAR_SCOPE })
   } catch (e) {
     return false
+  }
+
+  if (registration.waiting) {
+    registration.waiting.postMessage({ type: "SKIP_WAITING" })
   }
 
   try {
@@ -402,7 +409,7 @@ async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
 }
 
 async function loadProxyIntoIframe(iframe, target) {
-  const hasController = await waitForInterstellarServiceWorker()
-  iframe.src = hasController ? target : "/interstellar/tabs.html"
+  await waitForInterstellarServiceWorker()
+  iframe.src = target
 }
 

@@ -1,7 +1,8 @@
+const INTERSTELLAR_SCOPE = "/interstellar/"
+const INTERSTELLAR_SW_URL = `${INTERSTELLAR_SCOPE}sw.js?v=5-5-2024`
+
 window.addEventListener("load", () => {
-  navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", {
-    scope: "/interstellar/",
-  })
+  void waitForInterstellarServiceWorker()
 })
 
 const form = document.getElementById("fs")
@@ -63,12 +64,17 @@ function isUrl(val = "") {
 async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
   if (!("serviceWorker" in navigator)) return false
 
+  let registration
   try {
-    await navigator.serviceWorker.register("/interstellar/sw.js?v=5-5-2024", {
-      scope: "/interstellar/",
+    registration = await navigator.serviceWorker.register(INTERSTELLAR_SW_URL, {
+      scope: INTERSTELLAR_SCOPE,
     })
   } catch (e) {
     return false
+  }
+
+  if (registration.waiting) {
+    registration.waiting.postMessage({ type: "SKIP_WAITING" })
   }
 
   try {
@@ -103,13 +109,7 @@ async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
 }
 
 async function navigateToProxyTarget(target) {
-  const hasController = await waitForInterstellarServiceWorker()
-  if (hasController) {
-    window.location.href = target
-    return
-  }
-
-  // Fallback: avoid hard 404 if SW still isn't controlling this page yet.
-  window.location.href = "/interstellar/tabs.html"
+  await waitForInterstellarServiceWorker()
+  window.location.href = target
 }
 

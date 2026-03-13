@@ -1,7 +1,8 @@
+const INTERSTELLAR_SCOPE = "/static/interstellar/"
+const INTERSTELLAR_SW_URL = `${INTERSTELLAR_SCOPE}sw.js?v=5-5-2024`
+
 window.addEventListener("load", () => {
-  navigator.serviceWorker.register("/static/interstellar/sw.js?v=5-5-2024", {
-    scope: "/static/interstellar/",
-  })
+  void waitForInterstellarServiceWorker()
 })
 
 const form = document.getElementById("fs")
@@ -31,15 +32,14 @@ function processUrl(value, path) {
   sessionStorage.setItem("GoUrl", __uv$config.encodeUrl(url))
   const dy = localStorage.getItem("dy")
 
-  if (dy === "true") {
-    window.location.href = "/static/interstellar/a/q/" + __uv$config.encodeUrl(url)
-  } else {
-    if (path) {
-      location.href = path
-    } else {
-      window.location.href = "/static/interstellar/a/" + __uv$config.encodeUrl(url)
-    }
+  const target = dy === "true" ? "/static/interstellar/a/q/" + __uv$config.encodeUrl(url) : "/static/interstellar/a/" + __uv$config.encodeUrl(url)
+
+  if (path) {
+    location.href = path
+    return
   }
+
+  navigateToProxyTarget(target)
 }
 
 function go(value) {
@@ -59,5 +59,57 @@ function isUrl(val = "") {
     return true
   }
   return false
+}
+
+async function waitForInterstellarServiceWorker(timeoutMs = 4000) {
+  if (!("serviceWorker" in navigator)) return false
+
+  let registration
+  try {
+    registration = await navigator.serviceWorker.register(INTERSTELLAR_SW_URL, {
+      scope: INTERSTELLAR_SCOPE,
+    })
+  } catch (e) {
+    return false
+  }
+
+  if (registration.waiting) {
+    registration.waiting.postMessage({ type: "SKIP_WAITING" })
+  }
+
+  try {
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+    ])
+  } catch (e) {}
+
+  if (navigator.serviceWorker.controller) return true
+
+  await new Promise((resolve) => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      resolve()
+    }
+    const timer = setTimeout(() => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }, timeoutMs)
+    const onControllerChange = () => {
+      clearTimeout(timer)
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange)
+      finish()
+    }
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange)
+  })
+
+  return !!navigator.serviceWorker.controller
+}
+
+async function navigateToProxyTarget(target) {
+  await waitForInterstellarServiceWorker()
+  window.location.href = target
 }
 
